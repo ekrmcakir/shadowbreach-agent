@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowBreach | Daily Cyber Incident Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0b0f19; color: #38bdf8; font-family: ui-monospace, monospace; }
+        .terminal-box { border: 1px solid #1e293b; background: rgba(15, 23, 42, 0.75); }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
+    <header class="mb-8 border-b border-slate-800 pb-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-red-500 tracking-wider">⚡ SHADOWBREACH AGENT</h1>
+            <p class="text-xs text-slate-400">Autonomous Daily Incident Simulator (Powered by Amazon Bedrock)</p>
+        </div>
+        <span id="threatBadge" class="px-3 py-1 text-xs rounded bg-red-950 text-red-400 border border-red-800 font-bold">STATUS: STANDBY</span>
+    </header>
+
+    <main id="app" class="space-y-6">
+        <div class="terminal-box p-5 rounded-lg">
+            <div class="flex justify-between text-xs text-slate-400 mb-2">
+                <span id="scenarioDate">DATE: --</span>
+                <span id="scenarioTitle" class="text-white font-bold">LOADING SCENARIO...</span>
+            </div>
+            <p id="scenarioBriefing" class="text-sm text-slate-300 leading-relaxed"></p>
+        </div>
+
+        <div class="terminal-box p-4 rounded-lg bg-black text-xs text-emerald-400 overflow-x-auto">
+            <div class="text-slate-500 mb-1">// CloudTrail / VPC Intercept Logs</div>
+            <pre id="scenarioLogs" class="whitespace-pre-wrap"></pre>
+        </div>
+
+        <div class="terminal-box p-5 rounded-lg">
+            <h2 id="scenarioDilemma" class="text-sm font-bold text-white mb-4"></h2>
+            <div id="optionsContainer" class="space-y-3"></div>
+        </div>
+
+        <div id="resultBox" class="hidden terminal-box p-5 rounded-lg border-emerald-500">
+            <h3 id="resultTitle" class="text-base font-bold mb-2"></h3>
+            <p id="resultFeedback" class="text-sm text-slate-300 mb-3"></p>
+            <div class="p-3 bg-slate-900 border-l-2 border-emerald-400 text-xs text-emerald-300">
+                <strong>Key Takeaway: </strong><span id="takeawayText"></span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const DATA_URL = "daily_scenario.json";
+
+        async function loadDailyIncident() {
+            try {
+                const res = await fetch(DATA_URL);
+                const data = await res.json();
+                
+                document.getElementById('threatBadge').innerText = `THREAT: ${data.threat_level}`;
+                document.getElementById('scenarioDate').innerText = `INCIDENT DATE: ${data.date}`;
+                document.getElementById('scenarioTitle').innerText = data.scenario_title;
+                document.getElementById('scenarioBriefing').innerText = data.briefing;
+                document.getElementById('scenarioLogs').innerText = data.terminal_log;
+                document.getElementById('scenarioDilemma').innerText = `TACTICAL DECISION: ${data.dilemma}`;
+
+                const container = document.getElementById('optionsContainer');
+                container.innerHTML = '';
+                data.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-3 rounded bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 transition";
+                    btn.innerHTML = `<strong>[Option ${opt.id}]</strong> ${opt.action}`;
+                    btn.onclick = () => selectOption(opt, data.key_takeaway);
+                    container.appendChild(btn);
+                });
+            } catch (err) {
+                console.error("Error loading incident:", err);
+                document.getElementById('scenarioTitle').innerText = "System Offline - Awaiting Next Cron Trigger";
+            }
+        }
+
+        function selectOption(option, takeaway) {
+            const resBox = document.getElementById('resultBox');
+            const resTitle = document.getElementById('resultTitle');
+            const resFeedback = document.getElementById('resultFeedback');
+            const takeawayText = document.getElementById('takeawayText');
+
+            resBox.classList.remove('hidden');
+            if (option.is_optimal) {
+                resTitle.innerText = "✅ THREAT CONTAINED (Optimal Response)";
+                resTitle.className = "text-base font-bold text-emerald-400 mb-2";
+            } else {
+                resTitle.innerText = "❌ SUB-OPTIMAL ACTION (Security Degradation)";
+                resTitle.className = "text-base font-bold text-red-400 mb-2";
+            }
+            resFeedback.innerText = option.feedback;
+            takeawayText.innerText = takeaway;
+            resBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        loadDailyIncident();
+    </script>
+</body>
+</html>

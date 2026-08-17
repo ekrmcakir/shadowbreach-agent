@@ -1,0 +1,29 @@
+{
+  "date": "2026-08-22",
+  "scenario_title": "Public Exposure of S3 Buckets",
+  "threat_level": "CRITICAL",
+  "briefing": "At approximately 10:00 AM, the security team received an alert that several S3 buckets in your AWS environment are publicly accessible. This exposure could lead to unauthorized access to sensitive data.",
+  "terminal_log": "{\n    \"eventVersion\": \"1.08\",\n    \"userIdentity\": {\n        \"type\": \"IAMUser\",\n        \"principalId\": \"EXAMPLE\",\n        \"arn\": \"arn:aws:iam::123456789012:user/Alice\",\n        \"accountId\": \"123456789012\",\n        \"accessKeyId\": \"AKIAIOSFODNN7EXAMPLE\",\n        \"userName\": \"Alice\"\n    },\n    \"eventTime\": \"2026-08-22T10:00:00Z\",\n    \"eventSource\": \"s3.amazonaws.com\",\n    \"eventName\": \"PutBucketAcl\",\n    \"awsRegion\": \"us-west-2\",\n    \"sourceIPAddress\": \"203.0.113.1\",\n    \"userAgent\": \"Mozilla/5.0\",\n    \"requestParameters\": {\n        \"bucketName\": \"example-bucket-public\"\n    },\n    \"responseElements\": {\n        \"x-amz-request-id\": \"C3D13FE58DE4C810\",\n        \"x-amz-id-2\": \"8Fe9G8ur8dfh1iD9jdfj1v5bVbEXAMPLE\"\n    },\n    \"requestID\": \"C3D13FE58DE4C810\",\n    \"eventID\": \"4b78f662-68ea-4276-929f-c35cEXAMPLE\",\n    \"readOnly\": false,\n    \"resources\": [\n        {\n            \"ARN\": \"arn:aws:s3:::example-bucket-public\",\n            \"accountId\": \"123456789012\",\n            \"type\": \"AWS::S3::Bucket\",\n            \"name\": \"example-bucket-public\"\n        }\n    ],\n    \"eventType\": \"AwsApiCall\",\n    \"managementEvent\": true,\n    \"recipientAccountId\": \"123456789012\",\n    \"sharedEventID\": \"d8f70d71-9361-4d9f-a29a-61a6EXAMPLE\"\n}",
+  "dilemma": "Immediately after the alert, the Lead SecOps engineer needs to decide on the best course of action to mitigate the threat.",
+  "options": [
+    {
+      "id": "A",
+      "action": "Immediately delete the affected S3 buckets to prevent further exposure.",
+      "is_optimal": false,
+      "feedback": "Deleting the buckets could result in the loss of important data that might be necessary for investigations or business continuity."
+    },
+    {
+      "id": "B",
+      "action": "Revoke public access permissions on the affected S3 buckets and review IAM policies for potential privilege escalation.",
+      "is_optimal": true,
+      "feedback": "This approach minimizes data loss while addressing the immediate threat of public exposure and ensures that underlying security issues are also resolved."
+    },
+    {
+      "id": "C",
+      "action": "Ignore the alert and wait for further investigation.",
+      "is_optimal": false,
+      "feedback": "Ignoring the alert can result in prolonged exposure of sensitive data, potentially leading to data breaches."
+    }
+  ],
+  "key_takeaway": "Always address the immediate threat while ensuring minimal impact on data and operations."
+}

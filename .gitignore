@@ -1,0 +1,21 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+ENV/
+
+# AWS & Environment Configs
+.env
+.env.local
+*.pem
+.aws/
+
+# IDE & OS Specific
+.DS_Store
+.vscode/
+.cursor/
+*.swp
+*.swo
